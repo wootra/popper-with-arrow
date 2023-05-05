@@ -15,14 +15,14 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "allowSyntheticDefaultImports": true,
-    "sourceRoot": "src",
+    "sourceRoot": ".",
     "baseUrl": "."
   },
   "buildOptions": {
     "build": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", "*.config.js"]
 }

@@ -1,4 +1,4 @@
-type DebounceStore = {
+export type DebounceStore = {
     executedTime: number;
     id: ReturnType<typeof setTimeout> | 0;
     timeInMs: number;
