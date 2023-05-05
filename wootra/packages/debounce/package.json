@@ -1,0 +1,15 @@
+{
+  "name": "debounce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc index.ts --outDir dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "debounce"
+  ],
+  "author": "Songhyeon Jun",
+  "license": "ISC"
+}

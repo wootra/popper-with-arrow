@@ -1,0 +1,23 @@
+{
+  "name": "wootra",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "devDependencies": {
+    "create-vite": "^4.3.1",
+    "nx": "16.0.1",
+    "nx-cloud": "latest",
+    "react": "^18.2.0",
+    "typescript": "^5.0.4"
+  },
+  "workspaces": [
+    "packages/*",
+    "test-apps/*"
+  ],
+  "dependencies": {
+    "@popperjs/core": "^2.11.7",
+    "classnames": "^2.3.2",
+    "react-popper": "^2.3.0"
+  }
+}

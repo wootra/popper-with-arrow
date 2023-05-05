@@ -1,0 +1,139 @@
+:root {
+    --twa-color-almost-black: #333f48; // replace it to shared color name
+    --twa-color-light-warm-gray: rgb(210, 210, 208); // #d2d2d0
+    --twa-color-dark-teal: #007e87;
+    --twa-color-teal: #00b7bd;
+    --twa-back-color: white;
+    --twa-box-shadow-color: rgba(0, 0, 0, 0.15); //#00000026
+    --twa-back-z-index: 9999998;
+    --twa-arrow-z-index: 9999999;
+    --twa-font-size: 0.75rem;
+    --twa-line-height: 0.938rem;
+    --twa-min-width: 9.5rem;
+    --twa-padding: 0.75rem;
+    --twa-max-width: 27.5rem;
+    --twa-box-shadow-shape: 0 0 8px -3px;
+}
+
+[data-twa].twa-popper {
+    padding: var(--twa-padding);
+    border: solid 0.5px var(--twa-color-light-warm-gray);
+    background: var(--twa-back-color);
+    box-shadow: var(--twa-box-shadow-shape) var(--twa-box-shadow-color);
+    min-width: var(--twa-min-width);
+    max-width: var(--twa-max-width);
+    z-index: var(--twa-back-z-index);
+
+    > div.arrow {
+        bottom: 100%;
+        width: 1.5rem;
+        height: 0.75rem;
+        z-index: var(--twa-arrow-z-index);
+        &.top {
+            top: calc(100% - 0.15rem);
+            > svg {
+                transform: rotate(180deg);
+            }
+        }
+        &.bottom {
+            bottom: 100%;
+        }
+        > svg[data-default-arrow] {
+            position: absolute;
+            width: 1.5rem;
+            height: 0.85rem;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            > path {
+                stroke: var(--twa-color-light-warm-gray);
+                fill: var(--twa-back-color);
+                stroke-width: 1;
+            }
+            > rect {
+                fill: var(--twa-back-color);
+                stroke-width: 0;
+            }
+        }
+    }
+
+    & > [data-tooltip-body] {
+        &.single-line {
+            &,
+            & * {
+                white-space: nowrap;
+            }
+        }
+
+        &.default-text {
+            &,
+            & * {
+                color: var(--twa-color-almost-black);
+                white-space: break-spaces;
+                text-align: left;
+            }
+        }
+
+        &.default-link {
+            a,
+            a:hover,
+            a:link,
+            a:visited {
+                padding: 0;
+                text-transform: none;
+                width: max-content;
+                text-decoration: underline;
+            }
+
+            a,
+            a:link,
+            a:visited {
+                color: var(--twa-color-dark-teal);
+                text-underline-offset: 0.1rem;
+            }
+
+            a:hover {
+                color: var(--twa-color-teal);
+                text-underline-offset: 0.2rem;
+            }
+
+            &,
+            *,
+            a:link,
+            a:hover,
+            a:visited,
+            a:active {
+                font-size: var(--twa-font-size);
+                line-height: var(--twa-line-height);
+                text-transform: initial;
+                letter-spacing: normal;
+            }
+        }
+
+        &,
+        & > * {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &.clickable {
+            * {
+                pointer-events: all;
+                user-select: all;
+            }
+        }
+
+        &.default-list {
+            ul {
+                padding-inline-start: 1.25rem;
+                list-style: disc;
+                display: flex;
+                flex-direction: column;
+                li {
+                    text-align: left;
+                }
+            }
+        }
+    }
+}
