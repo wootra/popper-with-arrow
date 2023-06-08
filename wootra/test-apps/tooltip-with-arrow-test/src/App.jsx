@@ -1,5 +1,6 @@
 import { useState } from "react";
-import Tooltip from "tooltip-with-arrow";
+import { Tooltip } from "tooltip-with-arrow";
+import "tooltip-with-arrow/dist/style.css";
 import "./App.css";
 
 function App() {

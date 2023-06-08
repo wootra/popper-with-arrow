@@ -8,7 +8,11 @@ export default defineConfig({
     lib: {
       entry: [new URL("src/index.tsx", import.meta.url).pathname],
       fileName: "index",
+      name: "tooltip-with-arrow",
       formats: ["es"],
+    },
+    rollupOptions: {
+      external: ["react", "react-dom", "react-popper", "@popperjs/core"],
     },
   },
 });

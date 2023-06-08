@@ -1,3 +1,5 @@
-import Tooltip, {setDefaultArrowStyle, setDefaultTooltipClass} from './Tooltip';
-export {setDefaultArrowStyle, setDefaultTooltipClass};
-export default Tooltip;
+import Tooltip, {
+  setDefaultArrowStyle,
+  setDefaultTooltipClass,
+} from "./Tooltip";
+export { setDefaultArrowStyle, setDefaultTooltipClass, Tooltip };

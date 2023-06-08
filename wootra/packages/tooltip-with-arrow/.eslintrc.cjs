@@ -30,6 +30,7 @@ module.exports = {
     "**/*.scss",
     "**/*.d.ts",
     "**/*.map",
+    "dist",
   ],
   overrides: [
     {

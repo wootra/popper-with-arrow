@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, RefObject } from "react";
 
-import classNames from "classnames";
 import { Placement } from "@popperjs/core";
 import { createDebounce } from "debounce";
 import { usePopper } from "react-popper";
@@ -228,7 +227,7 @@ const TwaTooltip = React.memo((props: Props) => {
 
   const popperProps = {
     ...attributes.popper,
-    className: classNames(attributes.popper?.className, tooltipClassName),
+    className: [attributes.popper?.className, tooltipClassName].join(" "),
     style: {
       ...(styles.popper as Partial<CSSProperties>),
       ...((animationState.curr === "no-display"
@@ -249,13 +248,15 @@ const TwaTooltip = React.memo((props: Props) => {
     } as Partial<CSSProperties>,
   };
 
-  const bodyClassNames = classNames(
+  const bodyClassNames = [
     clickable && "clickable",
     defaultList && "default-list",
     defaultText && "default-text",
     defaultLink && "default-link",
-    singleLine && "single-line"
-  );
+    singleLine && "single-line",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return body || children ? (
     <div
@@ -266,10 +267,10 @@ const TwaTooltip = React.memo((props: Props) => {
       data-twa
     >
       <div
-        className={classNames(
+        className={[
           "arrow",
-          topPlacements.includes(placement) ? "top" : "bottom"
-        )}
+          topPlacements.includes(placement) ? "top" : "bottom",
+        ].join(" ")}
         data-popper-arrow
         style={{ ...styles.arrow }}
       >

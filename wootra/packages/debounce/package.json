@@ -2,8 +2,9 @@
   "name": "debounce",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.mjs",
+  "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "build": "vite build"
   },
