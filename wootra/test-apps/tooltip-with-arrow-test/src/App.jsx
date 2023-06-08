@@ -1,30 +1,45 @@
-import { useState } from "react";
 import { Tooltip } from "tooltip-with-arrow";
-import "tooltip-with-arrow/dist/style.css";
 import "./App.css";
+import "tooltip-with-arrow/dist/style.css";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div>
-        <a href="www.google.com">With Tooltip</a>
+    <div id="root">
+      <div className="card">
+        <a href="www.google.com">With String body</a>
         <Tooltip body="test tooltip" />
       </div>
-      <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        <a href="www.google.com">With Element body</a>
+        <Tooltip>
+          <div>test tooltip</div>
+        </Tooltip>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      <div className="card">
+        <a href="www.google.com">Clickable</a>
+        <Tooltip clickable>
+          <div>test tooltip</div>
+        </Tooltip>
+      </div>
+      <div className="card">
+        <a href="www.google.com">top-end</a>
+        <Tooltip placement="top-end">
+          <div>test tooltip</div>
+        </Tooltip>
+      </div>
+      <div className="card">
+        <a href="www.google.com">top-start</a>
+        <Tooltip placement="top-start">
+          <div>test tooltip</div>
+        </Tooltip>
+      </div>
+      <div className="card">
+        <a href="www.google.com">top</a>
+        <Tooltip placement="top">
+          <div>test tooltip</div>
+        </Tooltip>
+      </div>
+    </div>
   );
 }
 

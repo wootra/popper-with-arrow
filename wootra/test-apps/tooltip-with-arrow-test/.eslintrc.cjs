@@ -1,15 +1,46 @@
+/* eslint-env node */
 module.exports = {
-  env: { browser: true, es2020: true },
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react/jsx-runtime',
-    'plugin:react-hooks/recommended',
-  ],
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh'],
-  rules: {
-    'react-refresh/only-export-components': 'warn',
+  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint"],
+  env: {
+    browser: true,
+    amd: true,
+    node: true,
   },
-}
+  settings: {
+    jest: {
+      globalAliases: {
+        describe: ["context"],
+        fdescribe: ["fcontext"],
+        xdescribe: ["xcontext"],
+      },
+    },
+  },
+  root: true,
+  rules: {
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "no-restricted-globals": "off",
+    "jest/prefer-expect-assertions": "off",
+    indent: ["warn", 2],
+  },
+  ignorePatterns: [
+    "**/*.config.{js|ts}",
+    "**/*.css",
+    "**/*.scss",
+    "**/*.d.ts",
+    "**/*.map",
+    "dist",
+  ],
+  overrides: [
+    {
+      files: ["src/**/*.test.{js|ts|jsx|tsx}"],
+      excludedFiles: ["**/*.config.{js|ts}"],
+    },
+  ],
+  parserOptions: {
+    parser: "@typescript-eslint/parser",
+    ecmaVersion: 2020,
+    sourceType: "module",
+  },
+};
