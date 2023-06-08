@@ -1,2 +1,2 @@
-// @vitest-environment happy-dom
+// @vitest-environment jsdom
 export { describe, expect, test as it } from 'vitest'
