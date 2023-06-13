@@ -1,4 +1,4 @@
-import { Tooltip } from "tooltip-with-arrow";
+import { Tooltip } from "tooltip-with-arrow/src";
 import "./App.css";
 import "tooltip-with-arrow/dist/style.css";
 
@@ -8,6 +8,10 @@ function App() {
       <div className="card">
         <a href="www.google.com">With String body</a>
         <Tooltip body="test tooltip" />
+      </div>
+      <div className="card">
+        <a href="www.google.com">With Element body</a>
+        <Tooltip body={<div>test tooltip</div>} />
       </div>
       <div className="card">
         <a href="www.google.com">With Element body</a>

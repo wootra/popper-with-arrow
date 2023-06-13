@@ -12,7 +12,7 @@ import {
   ContentStyleOverrides,
   ContentStyleOverridesFilled,
 } from "./types";
-import { Props } from "./props";
+import { AnimationOptions, Props } from "./props";
 
 const startPlacements: Placement[] = ["bottom-start", "top-start"];
 const endPlacements: Placement[] = ["bottom-end", "top-end"];
@@ -30,6 +30,14 @@ const arrowDefaultStyle: ArrowStyleOverridesFilled = {
     </svg>
   ),
 };
+const defaultAnimationOptions: AnimationOptions = {
+  showTransitionDuration: 1000,
+  hideTransitionDuration: 300,
+  showTransitionDelay: 300,
+  hideTransitionDelay: 0,
+  useAutoTransitionStyle: true,
+};
+
 export const setDefaultTooltipClass = (className = "twa-popper") => {
   defaultClassName = className;
 };
@@ -50,9 +58,13 @@ const TwaTooltip = React.memo((props: Props) => {
     contentStyles = {} as ContentStyleOverrides,
     arrowStyleOverride = {} as ArrowStyleOverrides,
     tooltipClassName = defaultClassName, //use default style
+    animationOptions: animationOptionsFromProps = {} as AnimationOptions,
     children,
   } = props;
-
+  const animationOptions = {
+    ...defaultAnimationOptions,
+    ...animationOptionsFromProps,
+  };
   const { singleLine, defaultList, defaultLink, defaultText } = {
     singleLine: false,
     defaultLink: true,
@@ -68,6 +80,7 @@ const TwaTooltip = React.memo((props: Props) => {
   const [offsetElement, setOffsetElement] = useState<HTMLElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   const visibleValueRef = useRef(false);
+  const mouseIsInBoundaryRef = useRef(false);
   const placementRef = useRef(placement);
 
   const [currPlacement, setCurrPlacement] = useState(placement);
@@ -83,11 +96,12 @@ const TwaTooltip = React.memo((props: Props) => {
     ];
   }, [arrowWidth, currPlacement, offsetToArrow]);
 
-  const { animationState, showTooltip, hideTooltip } = useTooltipAnimation();
+  const { animationState, showTooltip, hideTooltip } =
+    useTooltipAnimation(animationOptions);
 
-  useEffect(() => {
-    visibleValueRef.current = animationState.curr !== "no-display"; // syncronize state to approach visible without affecting re-render
-  }, [animationState]);
+  const { curr, forward } = animationState;
+
+  visibleValueRef.current = curr !== "no-display"; // syncronize state to approach visible without affecting re-render
 
   const { styles, attributes, state } = usePopper(
     offsetElement,
@@ -112,8 +126,8 @@ const TwaTooltip = React.memo((props: Props) => {
         {
           name: "hide",
           data: {
-            isReferenceHidden: animationState.curr === "no-display",
-            hasPopperEscaped: animationState.curr === "no-display",
+            isReferenceHidden: curr === "no-display",
+            hasPopperEscaped: curr === "no-display",
           },
         },
         { name: "applyStyles" },
@@ -137,50 +151,42 @@ const TwaTooltip = React.memo((props: Props) => {
 
       setOffsetElement(offsetHolder);
 
-      const { debounce: mouseMoveHandler, reset } = createDebounce(
-        (e: MouseEvent) => {
-          const x = e.clientX;
-          const y = e.clientY;
-          const tr = trigger!.getClientRects()[0];
-          const buffer = 10; // buffer is required to ensure margin of the boundary since the area does not match exactly occuring an early hide state.
+      const mouseMoveHandlerSource = (e: MouseEvent) => {
+        const x = e.clientX;
+        const y = e.clientY;
+        const tr = trigger!.getClientRects()[0];
+        const buffer = 10; // buffer is required to ensure margin of the boundary since the area does not match exactly occuring an early hide state.
+        if (clickable) {
+          const pr = popperElement.getClientRects()[0];
 
-          if (clickable) {
-            const pr = popperElement.getClientRects()[0];
-
-            if (
-              isOutOfBoundary(x, y, tr, buffer) &&
-              isOutOfBoundary(x, y, pr, buffer)
-            ) {
-              window.dispatchEvent(new Event("close-existing-tooltips"));
-            } else {
-              if (!visibleValueRef.current) {
-                showTooltip();
-              }
-            }
-          } else {
-            if (isOutOfBoundary(x, y, tr, buffer)) {
-              window.dispatchEvent(new Event("close-existing-tooltips"));
-            } else {
-              if (!visibleValueRef.current) {
-                showTooltip();
-              }
-            }
+          if (
+            isOutOfBoundary(x, y, tr, buffer) &&
+            isOutOfBoundary(x, y, pr, buffer)
+          ) {
+            closeTooltip();
           }
-        },
-        250,
-        1
+        } else {
+          if (isOutOfBoundary(x, y, tr, buffer)) {
+            closeTooltip();
+          }
+        }
+      };
+      const { debounce: mouseMoveHandler, reset } = createDebounce(
+        mouseMoveHandlerSource,
+        30,
+        0
       );
 
       const closeTooltip = () => {
-        hideTooltip();
-        reset();
-        visibleValueRef.current = false;
+        mouseIsInBoundaryRef.current = false;
         document.body.removeEventListener("mousemove", mouseMoveHandler);
         window.removeEventListener("message", onOtherTooltipOpen);
         window.removeEventListener(
           "close-existing-tooltips",
           onOtherTooltipOpen
         );
+        hideTooltip();
+        reset();
       };
 
       const onOtherTooltipOpen = (e: Event) => {
@@ -189,21 +195,25 @@ const TwaTooltip = React.memo((props: Props) => {
         }
       };
 
+      const doWhenMouseEnter = () => {
+        window.dispatchEvent(new Event("close-existing-tooltips"));
+        showTooltip();
+        document.body.addEventListener("mousemove", mouseMoveHandler);
+        window.addEventListener("close-existing-tooltips", onOtherTooltipOpen);
+      };
       const mounseEnterHandler = (e: MouseEvent) => {
         if (e.target === e.currentTarget) {
+          mouseIsInBoundaryRef.current = true;
           // prevent this is triggered when it is hidden
-          window.dispatchEvent(new Event("close-existing-tooltips"));
-          showTooltip();
-          document.body.addEventListener("mousemove", mouseMoveHandler);
-          window.addEventListener(
-            "close-existing-tooltips",
-            onOtherTooltipOpen
-          );
+          doWhenMouseEnter();
         }
       };
 
       trigger!.addEventListener("mouseenter", mounseEnterHandler);
-
+      if (mouseIsInBoundaryRef.current) {
+        // for when tooltip is remounted.
+        doWhenMouseEnter();
+      }
       return () => {
         trigger?.removeEventListener("mouseenter", mounseEnterHandler);
         document.body.removeEventListener("mousemove", mouseMoveHandler);
@@ -215,7 +225,6 @@ const TwaTooltip = React.memo((props: Props) => {
         reset();
       };
     }
-    // return () => {};
   }, [
     popperElement,
     triggerDepth,
@@ -224,25 +233,44 @@ const TwaTooltip = React.memo((props: Props) => {
     showTooltip,
     hideTooltip,
   ]);
-
+  const arrowPlace = topPlacements.includes(placement) ? "top" : "bottom";
+  const {
+    showTransitionDuration,
+    hideTransitionDuration,
+    showTransitionDelay,
+    hideTransitionDelay,
+    useAutoTransitionStyle,
+  } = animationOptions;
   const popperProps = {
     ...attributes.popper,
-    className: [attributes.popper?.className, tooltipClassName].join(" "),
+    className: [
+      attributes.popper?.className,
+      tooltipClassName,
+      curr,
+      forward !== null ? (forward ? "forward" : "backwrad") : "",
+    ].join(" "),
     style: {
       ...(styles.popper as Partial<CSSProperties>),
-      ...((animationState.curr === "no-display"
+      ...((curr === "no-display"
         ? { display: "none" }
         : {}) as Partial<CSSProperties>),
       ...(styleOverride || {}),
-      opacity:
-        animationState.curr === "display-opacity-1" ||
-        animationState.curr === "display-stable"
-          ? 1
-          : 0,
-      ...(animationState.curr !== "no-display" && {
-        transitionDuration: "1s",
-        transitionProperty: "opacity",
-        transitionDelay: "20ms",
+      ...(useAutoTransitionStyle &&
+        forward !== null && {
+        opacity: curr === "display-opacity-1" ? 1 : 0,
+        transitionDuration: `${
+          forward ? showTransitionDuration : hideTransitionDuration
+        }ms`,
+        ...(arrowPlace !== "top"
+          ? { marginTop: curr === "display-opacity-0" ? `${10}px` : `${0}px` }
+          : {
+            marginBottom:
+                  curr === "display-opacity-0" ? `${10}px` : `${0}px`,
+          }),
+        transitionProperty: "opacity, margin-top, margin-bottom",
+        transitionDelay: `${
+          forward ? showTransitionDelay : hideTransitionDelay
+        }ms}`,
         msTransitionTimingFunction: "linear",
       }),
     } as Partial<CSSProperties>,
@@ -267,10 +295,7 @@ const TwaTooltip = React.memo((props: Props) => {
       data-twa
     >
       <div
-        className={[
-          "arrow",
-          topPlacements.includes(placement) ? "top" : "bottom",
-        ].join(" ")}
+        className={["arrow", arrowPlace].join(" ")}
         data-popper-arrow
         style={{ ...styles.arrow }}
       >

@@ -7,6 +7,14 @@ import type {
   PropsWithChildren,
 } from "react";
 
+export type AnimationOptions = {
+  showTransitionDuration: number;
+  hideTransitionDuration: number;
+  showTransitionDelay: number;
+  hideTransitionDelay: number;
+  useAutoTransitionStyle: boolean;
+};
+
 export type Props = {
   /**
    * default is 0. trigger will be automatically set as the direct previous sibling.
@@ -56,4 +64,5 @@ export type Props = {
    */
   tooltipClassName?: string;
   arrowStyleOverride?: ArrowStyleOverrides;
+  animationOptions: AnimationOptions;
 } & PropsWithChildren;
